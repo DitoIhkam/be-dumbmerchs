@@ -1,9 +1,9 @@
-def branch = "cicd"
+def branch = "production"
 def repo = "https://github.com/DitoIhkam/be-dumbmerchs.git"
 def cred = "ditoihkam"
-def dir = "~/be-dumbmerch"
+def dir = "~/fe-dumbmerch"
 def server = "ditoihkam@103.226.139.181"
-def imagename = "ditoihkam-backend-cicd"
+def imagename = "backend-production"
 def dockerusername = "kelompok2"
 
 
@@ -40,6 +40,22 @@ pipeline {
             }
         }
 
+
+        stage('Image push') {
+            steps {
+                sshagent([cred]) {
+                    sh """ssh -o StrictHostKeyChecking=no ${server} << EOF
+                        docker tag ${imagename}:latest ${dockerusername}/${imagename}:latest
+                        docker image push ${dockerusername}/${imagename}:latest
+                        exit
+                    EOF
+                    """
+                }
+            }
+        }
+
+
+
         stage('Running the image in a container') {
             steps {
                 sshagent([cred]) {
@@ -48,19 +64,6 @@ pipeline {
                         docker container stop ${imagename} || true
                         docker container rm ${imagename} || true
                         docker run -d -p 5001:5000 --name="${imagename}"  ${imagename}:latest
-                        exit
-                    EOF
-                    """
-                }
-            }
-        }
-
-        stage('Image push') {
-            steps {
-                sshagent([cred]) {
-                    sh """ssh -o StrictHostKeyChecking=no ${server} << EOF
-                        docker tag ${imagename}:latest ${dockerusername}/${imagename}:latest
-                        docker image push ${dockerusername}/${imagename}:latest
                         exit
                     EOF
                     """
