@@ -1,9 +1,9 @@
 def branch = "production"
-def repo = "https://github.com/DitoIhkam/fe-dumbmerchs.git"
+def repo = "https://github.com/DitoIhkam/be-dumbmerchs.git"
 def cred = "ditoihkam"
 def dir = "~/fe-dumbmerch"
 def server = "ditoihkam@103.226.139.181"
-def imagename = "frontend-production"
+def imagename = "backend-production"
 def dockerusername = "kelompok2"
 
 
@@ -63,7 +63,7 @@ pipeline {
                         cd ${dir}
                         docker container stop ${imagename} || true
                         docker container rm ${imagename} || true
-                        docker run -d -p 3000:3000 --name="${imagename}"  ${imagename}:latest
+                        docker run -d -p 5001:5000 --name="${imagename}"  ${imagename}:latest
                         exit
                     EOF
                     """
